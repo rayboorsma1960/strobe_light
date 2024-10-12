@@ -1,33 +1,23 @@
 import 'dart:async';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
-import 'package:camera/camera.dart';
+import 'android_flash_controller.dart';
+import 'strobe_consistency_logger.dart';
 
 class StrobeController extends ChangeNotifier {
   double _frequency = 1.0;
   bool _isStrobing = false;
-  CameraController? _cameraController;
   Isolate? _isolate;
   ReceivePort? _receivePort;
   SendPort? _sendPort;
+  final StrobeConsistencyLogger _logger = StrobeConsistencyLogger();
+  final AndroidFlashController _flashController = AndroidFlashController();
 
   StrobeController();
 
   double get frequency => _frequency;
   bool get isStrobing => _isStrobing;
-  CameraController? get cameraController => _cameraController;
-
-  Future<void> initializeCamera(CameraDescription camera) async {
-    print("Initializing camera: ${camera.name}");
-    _cameraController = CameraController(camera, ResolutionPreset.medium);
-    try {
-      await _cameraController!.initialize();
-      print("Camera initialized successfully");
-      notifyListeners();
-    } catch (e) {
-      print("Error initializing camera: $e");
-    }
-  }
+  StrobeConsistencyLogger get logger => _logger;
 
   void setFrequency(double newFrequency) {
     if (_frequency != newFrequency) {
@@ -52,7 +42,7 @@ class StrobeController extends ChangeNotifier {
     if (_isStrobing) {
       _isStrobing = false;
       _stopIsolate();
-      _turnOffTorch();
+      _flashController.toggleFlash(); // Ensure flash is off
       print("Strobe effect stopped");
       notifyListeners();
     }
@@ -107,26 +97,14 @@ class StrobeController extends ChangeNotifier {
   }
 
   void _toggleFlash(bool on) {
-    if (_cameraController != null && _cameraController!.value.isInitialized) {
-      try {
-        _cameraController!.setFlashMode(on ? FlashMode.torch : FlashMode.off);
-        print("Flash mode set to: ${on ? 'torch' : 'off'}");
-      } catch (e) {
-        print("Error setting flash mode: $e");
-      }
-    } else {
-      print("Camera controller not initialized");
-    }
-  }
-
-  void _turnOffTorch() {
-    _toggleFlash(false);
+    _flashController.toggleFlash();
+    _logger.logFlash();
   }
 
   @override
   void dispose() {
     stopStrobe();
-    _cameraController?.dispose();
+    _flashController.dispose();
     super.dispose();
   }
 }
