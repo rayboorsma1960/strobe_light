@@ -81,8 +81,8 @@ class StrobeController extends ChangeNotifier {
 
     void startStrobe() {
       timer?.cancel();
-      final intervalMs = (500 / frequency).round();
-      timer = Timer.periodic(Duration(milliseconds: intervalMs), (_) {
+      final intervalMicros = (500000 / frequency).round();
+      timer = Timer.periodic(Duration(microseconds: intervalMicros), (_) {
         isOn = !isOn;
         sendPort.send(isOn);
       });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../bloc/strobe_controller.dart';
 import '../widgets/strobe_analysis_widget.dart'; // Add this import
-import 'package:fl_chart/fl_chart.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

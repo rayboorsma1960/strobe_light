@@ -19,6 +19,7 @@ dependencies:
   bloc_test: ^9.0.0
   equatable: ^2.0.5  # Use the latest version available
   fl_chart: ^0.69.0
+  provider: ^6.0.0
 
 dev_dependencies:
   flutter_test:

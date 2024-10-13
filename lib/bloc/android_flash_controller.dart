@@ -11,9 +11,9 @@ class AndroidFlashController {
         await TorchLight.enableTorch();
       }
       _isFlashOn = !_isFlashOn;
-      print("Flash toggled successfully. Is on: $_isFlashOn");
+    //  print("Flash toggled successfully. Is on: $_isFlashOn");
     } catch (e) {
-      print("Failed to toggle flash: $e");
+    //  print("Failed to toggle flash: $e");
     }
   }
 
